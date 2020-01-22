@@ -54,9 +54,8 @@ until exit
 
     case action 
     when "See my reviews"
-        user.reviews
         puts "My Reviews:"
-        user.reviews.each do |r|
+        user.reload.reviews.each do |r|
             puts '-------------'
             spot = Bar.all.find { |b| b.id == r.bar_id }
             puts "#{spot.business_name}"
@@ -146,15 +145,6 @@ until exit
     end
 
 end
-
-# create review
-def create_review(user)
-
-
-end
-
-# create new bar/restaurant/place
-
 
 # user login stuff
 
