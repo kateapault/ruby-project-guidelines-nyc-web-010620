@@ -44,6 +44,7 @@ until logged_in
         pw = prompt.mask("Enter password: ")
         user = User.create({name: username, password: pw})
         logged_in = true
+        puts "Welcome, #{user.name}! Thanks for signing up!"
     end
 end
 
@@ -62,13 +63,13 @@ until exit
             puts "Your rating: #{r.rating}"
         end
     when "Change or delete a review"
-        choices = user.reviews.map do |r|
+        choices = user.reload.reviews.map do |r|
             spot = Bar.all.find { |b| b.id == r.bar_id }
             "#{spot.business_name}: #{r.rating}"
         end
         my_review = prompt.enum_select("Choose a review to edit/delete:",choices)
         ind = choices.find_index(my_review)
-        review_to_change = user.reviews[ind]
+        review_to_change = user.reload.reviews[ind]
         crud = prompt.select("Would you like to edit or delete this review?",["Edit","Delete"])
         case crud
         when 'Edit'
@@ -80,6 +81,7 @@ until exit
             x = prompt.yes?("Are you sure you want to delete this review?")
             if x
                 review_to_change.delete
+                puts "Review deleted!"
             end
         end
     when "Search for a spot"
@@ -138,7 +140,9 @@ until exit
                 end
             end
         when 'Random'
-            Bar.all[0..5]
+            5.times do 
+                puts "#{Bar.all[rand(Bar.all.size)].business_name}"
+            end
         end
     when "Exit"
         exit = true
