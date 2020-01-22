@@ -40,7 +40,13 @@ until exit
 
     case action 
     when "See my reviews"
-        user.reviews.each { |r| puts r }
+        puts "My Reviews:"
+        user.reviews.each do |r|
+            puts '-------------'
+            spot = Bar.all.find { |b| b.id == r.bar_id }
+            puts "#{spot.business_name}"
+            puts "Your rating: #{r.rating}"
+        end
     when "Search for a spot"
         spot_name = prompt.ask("Enter the name of the spot you want to search: ")
         sleep(1)
