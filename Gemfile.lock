@@ -15,10 +15,11 @@ GEM
     arel (9.0.0)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
-    database_cleaner (1.7.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     equatable (0.6.1)
+    ffi (1.12.1)
+    hashie (3.6.0)
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -29,6 +30,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
     minitest (5.14.0)
+    multipart-post (2.0.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     necromancer (0.5.1)
@@ -58,7 +60,13 @@ GEM
     sinatra-activerecord (2.0.14)
       activerecord (>= 3.2)
       sinatra (>= 1.0)
+    soda-ruby (1.0.0)
+      hashie (~> 3.5)
+      multipart-post (~> 2.0.0)
+      sys-uname (~> 1.0.2)
     sqlite3 (1.4.2)
+    sys-uname (1.0.4)
+      ffi (>= 1.0.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
     tty-color (0.5.0)
@@ -84,12 +92,12 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (~> 5.2)
-  database_cleaner
   pry
   rake
   require_all
   rest-client
   sinatra-activerecord
+  soda-ruby
   sqlite3
   tty-prompt
 
