@@ -70,7 +70,7 @@ until exit
     when "Create Review"
         spot_name = prompt.ask("What Spot would you like to Review?")
         spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
-        rate = prompt.ask("Please rate #{spot_name} from 0-9")
+        rate = (prompt.ask("Please rate #{spot_name} from 0-10")).clamp(0,10)
         new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
         puts "Review created!"
 
@@ -83,17 +83,21 @@ until exit
         ind = choices.find_index(my_review)
         review_to_change = user.reviews[ind]
         crud = prompt.select("Would you like to Edit or Delete this Review?",["Edit","Delete"])
+        
         case crud
+
         when 'Edit'
             new_rating = prompt.ask("What is your new Rating for this Spot?")
             review_to_change.rating = new_rating
+            review_to_change.save
             sleep(0.25)
-            puts "Review Updated! "
+            puts "Review Updated!"
+            
         when 'Delete'
             x = prompt.yes?("Are you sure you want to delete this review?")
             if x
                 review_to_change.reload.delete
-                puts(0.25)
+                sleep(0.25)
                 puts "Review Deleted! (ノಠ益ಠ)ノ彡┻━┻"
             end
         end
