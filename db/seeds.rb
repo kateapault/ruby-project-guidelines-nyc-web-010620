@@ -6,7 +6,7 @@ Review.destroy_all
 
 def call_results
     client = SODA::Client.new({:domain => "data.cityofnewyork.us", :app_token => "ZT1h204ngahoXzGHQC8ebl5lo"})
-    results = client.get("https://data.cityofnewyork.us/resource/w7w3-xahh.json", {"$where" => "industry = 'Sidewalk Cafe'"})
+    results = client.get("https://data.cityofnewyork.us/resource/w7w3-xahh.json", {"$limit" => 5000,"$where" => "industry = 'Sidewalk Cafe'"})
     results_api = results.body
         puts "Got #{results_api.size} results."
     results_api.each do |result| 
