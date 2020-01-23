@@ -20,11 +20,11 @@ Y88b  d88P 888        Y88b. .d88P    888         888     888        888  T88b
                                                                              
                                                                               
 '
-puts logo
 
 logged_in = false
 
 until logged_in
+    puts logo
     start_action = prompt.select('',['Log In','Sign Up','About'])
     case start_action
     when "Log In"
@@ -56,7 +56,7 @@ until logged_in
         logged_in = true
         puts "Welcome, #{user.name}! Thanks for signing up!"
     when "About"
-        puts "Info goes here!"
+        puts "This super cool program was made by Ed and Kate for their mod 1 project.\n They used the Soda API gem and their brillaint brains to make this."
     end
 end
 
@@ -65,7 +65,7 @@ until exit
 
     pause
     action = prompt.select("What would you like to do?",
-        ["See My Reviews","Create Review","Change or Delete Review","Explore Spots","Exit"])
+        ["See My Reviews","Create Review","Change or Delete Review","Explore Spots","See Another Person's Reviews","Exit"])
 
     case action 
 
@@ -73,12 +73,8 @@ until exit
         puts "My Reviews:"
         my_reviews = user.reload.reviews
         if my_reviews.size > 0
-            my_reviews.each do |r|
-                puts '-------------'
-                spot = Bar.all.find { |b| b.id == r.bar_id }
-                puts "#{spot.business_name.nil? ? (spot.name) : (spot.business_name)} | #{spot.contact_number}"
-                puts "Rating: #{r.rating}"
-            end
+            n = selectable_reviews(my_reviews)
+            puts("#{n}")
         else
             puts "No reviews yet!"
         end
@@ -105,23 +101,14 @@ until exit
         if my_review != "Back"
             ind = choices.find_index(my_review)
             review_to_change = user.reviews[ind]
-            crud = prompt.select("Would you like to Edit or Delete this Review?",["Edit","Delete"])
+            crud = prompt.select("Would you like to Edit or Delete this Review?",["Edit","Delete","Back"])
             
             case crud
             when 'Edit'
-                new_rating = prompt.ask("What is your new Rating for this Spot?").to_i.clamp(0,10)
-                review_to_change.rating = new_rating
-                review_to_change.save
-                sleep(0.25)
-                puts "Review Updated!"
+                edit_review(review_to_change)
                 
             when 'Delete'
-                x = prompt.yes?("Are you sure you want to delete this Review?")
-                if x
-                    review_to_change.reload.delete
-                    sleep(0.25)
-                    puts "Review Deleted! (ノಠ益ಠ)ノ彡┻━┻"
-                end
+                delete_review(review_to_change)
             end
         end
     when "Explore Spots"
@@ -135,6 +122,8 @@ until exit
         when 'By Name'
             spot = search_spots_by("name")
         end
+        
+    when "See Another Person's Reviews"
         
     when "Exit"
         exit = true
