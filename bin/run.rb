@@ -70,14 +70,14 @@ until exit
     when "Create Review"
         spot_name = prompt.ask("What Spot would you like to Review?")
         spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
-        rate = (prompt.ask("Please rate #{spot_name} from 0-10")).clamp(0,10)
+        rate = prompt.ask("Please rate #{spot_name} from 0-10")
         new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
         puts "Review created!"
 
     when "Change or Delete Review"
         choices = user.reload.reviews.map do |r|
             spot = Bar.all.find { |b| b.id == r.bar_id }
-            "#{spot.business_name}: #{r.rating}"
+            "#{spot.business_name.nil? ? (spot.name) : (spot.business_name)}: #{r.rating}"
         end
         my_review = prompt.enum_select("Choose a Review to Edit/Delete:",choices)
         ind = choices.find_index(my_review)
@@ -94,7 +94,7 @@ until exit
             puts "Review Updated!"
             
         when 'Delete'
-            x = prompt.yes?("Are you sure you want to delete this review?")
+            x = prompt.yes?("Are you sure you want to delete this Review?")
             if x
                 review_to_change.reload.delete
                 sleep(0.25)
@@ -134,6 +134,7 @@ until exit
                     end
                 end
             end
+        
         when 'By Name'
         spot_name = prompt.ask("Enter the name of the spot you want to search: ")
         sleep(0.5)
@@ -142,23 +143,25 @@ until exit
         spots = Bar.all.select do |b| 
             if b["business_name"]
                 b["business_name"].include?(spot_name)
-                end
+            elsif b["name"]
+                b["name"].include?(spot_name)
             end
-        if spots.each do |t|
-            puts "#{t.business_name}, #{t.address_city}, #{t.contact_number}"
-            puts "---------------------------------"
+        end
+        if spots.size > 0
+            spots.each do |t|
+            puts "#{t.business_name.nil? ? (t.name) : (t.business_name)} | #{t.address_city} | #{t.contact_number}"
             rates = t.reviews.map { |r| r.rating }
             if rates.size > 0
-                real_rating = rates.each {|s| s > 0}
-                puts "Average rating: #{real_rating.sum/real_rating.size}"
-                puts "---------------------------------"
+                puts "Average rating: #{rates.sum/rates.size}"
                 puts "Reviews: "
                 t.reviews.each do |review|
                     u = User.all.find { |user| user.id == review.user_id }
                     puts "#{u.name} gave this spot a #{review.rating}"
+                    puts "---------------------------------"
                 end
             else
                 puts "No reviews yet." # can we add something to link this to review for this spot?
+                puts "---------------------------------"
             end
         end
         else
