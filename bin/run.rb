@@ -112,68 +112,14 @@ until exit
         att = prompt.select('',['By Name','By City','By Zip'])
         case att
         when 'By Zip'
-            zip = prompt.ask("Enter zip code: ")
-            zip_bars = Bar.all.select { |b| b.address_zip == zip }
-            if zip_bars.size == 0
-                puts "Sorry, no spots found there!"
-            else
-                zip_bars.each do |b| 
-                    if b.business_name
-                        puts b.business_name 
-                    else
-                        puts b.name
-                    end
-                end
-            end
-
+            spot = search_spots_by("zip")
         when 'By City'
-            city = prompt.ask("Enter city: ")
-            city_bars = Bar.all.select { |b| b.address_city == city }
-            if !city_bars
-                puts "Sorry, no spots found there!"
-            else
-                city_bars.each do |b| 
-                    if b.business_name
-                        puts b.business_name 
-                    else
-                        puts b.name
-                    end
-                end
-            end
+            spot = search_spots_by("city")
         
         when 'By Name'
-        spot_name = prompt.ask("Enter the name of the spot you want to search: ")
-        sleep(0.5)
-        puts "la la la searching for #{spot_name}"
-        sleep(0.5)
-        spots = Bar.all.select do |b| 
-            if b["business_name"]
-                b["business_name"].include?(spot_name)
-            elsif b["name"]
-                b["name"].include?(spot_name)
-            end
+            spot = search_spots_by("name")
         end
-        if spots.size > 0
-            spots.each do |t|
-            puts "#{t.business_name.nil? ? (t.name) : (t.business_name)} | #{t.address_city} | #{t.contact_number}"
-            rates = t.reviews.map { |r| r.rating }
-            if rates.size > 0
-                puts "Average rating: #{rates.sum/rates.size}"
-                puts "Reviews: "
-                t.reviews.each do |review|
-                    u = User.all.find { |user| user.id == review.user_id }
-                    puts "#{u.name} gave this spot a #{review.rating}"
-                    puts "---------------------------------"
-                end
-            else
-                puts "No reviews yet." # can we add something to link this to review for this spot?
-                puts "---------------------------------"
-            end
-        end
-        else
-            puts "No spot with that name found."
-        end
-    end
+        
     when "Exit"
         exit = true
     end

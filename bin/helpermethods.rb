@@ -34,7 +34,11 @@ def search_spots_by(attribute)
         when "zip"
             spot.address_zip == search_term
         when "name"
-            spot.business_name.nil? ? (spot.name == search_term) : (spot.business_name == search_term)
+            if spot["business_name"]
+                spot["business_name"].include?(search_term)
+            elsif spot["name"]
+                spot["name"].include?(search_term)
+            end
         end
     end
 
