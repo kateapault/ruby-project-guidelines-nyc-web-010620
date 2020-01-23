@@ -4,6 +4,8 @@ def edit_review(review)
     prompt = TTY::Prompt.new
     new_rating = prompt.ask("What is your new Rating for this Spot?").to_i.clamp(0,10)
     review.rating = new_rating
+    new_comment = prompt.ask("Update your Comment on this Spot")
+    review.comments = new_comment
     review.save
     sleep(0.25)
     puts "Review Updated!"
@@ -57,6 +59,17 @@ def selectable_spots(arr)
             menu.choice "#{name}| #{spot.address_city} | #{spot.contact_number}\n#{rates_info}", spot
         end
     end
+end
+
+def spot_profile(arg)
+    puts "#{arg.business_name.nil? ? (arg.name) : (arg.business_name)} | #{arg.address_city} | #{arg.contact_number}"
+    puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+    arg.reviews.each do |review|
+        user = User.all.find {|u| u.id == review.user_id}
+        puts "#{user.name} gave this place a #{review.rating}\n #{review.comments}"
+        puts "---------------------------------"
+    end
+
 end
 
 def search_spots_by(attribute)

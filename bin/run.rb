@@ -3,6 +3,7 @@ require_relative './helpermethods'
 prompt = TTY::Prompt.new
 
 def pause()
+    puts "\npress enter to continue"
     gets
     system('clear')
 end
@@ -100,6 +101,8 @@ until exit
                     if y 
                         new_rating = prompt.ask("What is your new Rating for this Spot?")
                         reviewed_spot.rating = new_rating
+                        new_comment = prompt.ask("Update your Comment on this Spot")
+                        reviewed_spot.comments = new_comment
                         reviewed_spot.save
                         sleep(0.25)
                         puts "Review Updated!"
@@ -115,15 +118,17 @@ until exit
                 puts "Spot not found"
             end
     when "Explore Spots"
-        att = prompt.select('',['By Name','By City','By Zip'])
+        att = prompt.select('',['By Name','By City','By Zip','Back'])
         case att
         when 'By Zip'
             spot = search_spots_by("zip")
+            spot_profile(spot)
         when 'By City'
             spot = search_spots_by("city")
-        
+            spot_profile(spot)
         when 'By Name'
             spot = search_spots_by("name")
+            spot_profile(spot)
         end
         
     when "See Another Person's Reviews"
