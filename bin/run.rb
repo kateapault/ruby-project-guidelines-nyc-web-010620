@@ -144,13 +144,17 @@ until exit
             puts "#{t.business_name}, #{t.address_city}, #{t.contact_number}"
             puts "---------------------------------"
             rates = t.reviews.map { |r| r.rating }
-            real_rating = rates.each {|s| s > 0}
-            puts "Average rating: #{real_rating.sum/real_rating.size}"
-            puts "---------------------------------"
-            puts "Reviews: "
-            t.reviews.each do |review|
-                u = User.all.find { |user| user.id == review.user_id }
-                puts "#{u.name} gave this spot a #{review.rating}"
+            if rates.size > 0
+                real_rating = rates.each {|s| s > 0}
+                puts "Average rating: #{real_rating.sum/real_rating.size}"
+                puts "---------------------------------"
+                puts "Reviews: "
+                t.reviews.each do |review|
+                    u = User.all.find { |user| user.id == review.user_id }
+                    puts "#{u.name} gave this spot a #{review.rating}"
+                end
+            else
+                puts "No reviews yet." # can we add something to link this to review for this spot?
             end
         end
         else
