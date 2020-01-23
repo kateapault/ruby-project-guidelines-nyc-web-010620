@@ -26,7 +26,7 @@ end
 def search_spots_by(attribute)
     prompt = TTY::Prompt.new
 
-    search_term = prompt.ask("Enter #{attribute} to search: ")
+    search_term = prompt.ask("Enter #{attribute} to search: ").upcase!
     spots = Bar.all.select do |spot|
         case attribute
         when "city"

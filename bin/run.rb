@@ -84,7 +84,7 @@ until exit
         end
 
     when "Create Review"
-        spot_name = prompt.ask("What Spot would you like to Review?")
+        spot_name = prompt.ask("What Spot would you like to Review?").upcase!
         spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
             if spot
                 puts "#{spot.name}"
@@ -106,7 +106,6 @@ until exit
         crud = prompt.select("Would you like to Edit or Delete this Review?",["Edit","Delete"])
         
         case crud
-
         when 'Edit'
             new_rating = prompt.ask("What is your new Rating for this Spot?")
             review_to_change.rating = new_rating
