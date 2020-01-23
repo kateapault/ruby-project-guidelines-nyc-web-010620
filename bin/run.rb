@@ -22,9 +22,8 @@ Y88b  d88P 888        Y88b. .d88P    888         888     888        888  T88b
 '
 
 logged_in = false
-
+puts logo
 until logged_in
-    puts logo
     start_action = prompt.select('',['Log In','Sign Up','About'])
     
     case start_action
@@ -69,7 +68,7 @@ until exit
 
     pause
     action = prompt.select("What would you like to do?",
-        ["See My Reviews","Create Review","Change or Delete Review","Explore Spots","See Another Person's Reviews","Exit"])
+        ["See My Reviews","Create Review","Explore Spots","See Another Person's Reviews","Exit"])
 
     case action 
 
@@ -77,8 +76,17 @@ until exit
         puts "My Reviews:"
         my_reviews = user.reload.reviews
         if my_reviews.size > 0
-            n = selectable_reviews(my_reviews)
-            puts("#{n}")
+            selected_review = selectable_reviews(my_reviews)
+            this_spot = Bar.all.find { |b| b.id == selected_review.bar_id }
+            this_spot.business_name.nil? ? (name = this_spot.name) : (name = this_spot.business_name)
+            puts "#{name} | #{this_spot.contact_number}\nRating: #{selected_review.rating}\n#{selected_review.comments}"
+            review_action = prompt.select('',['Edit','Delete','Back'])
+            case review_action
+            when 'Edit'
+                edit_review(selected_review)
+            when 'Delete'
+                delete_review(selected_review)
+            end
         else
             puts "No reviews yet!"
         end
@@ -98,34 +106,14 @@ until exit
                     end
                 else
                     puts "#{spot.name}"
-                    rate = prompt.ask("Please rate #{spot_name} from 0-10")
-                    new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
+                    rate = prompt.ask("Please rate #{spot_name} from 0-10: ")
+                    comment = prompt.ask("Please enter your comments on this Spot: ")
+                    new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate,comments: comment})
                     puts "Review created!"
                 end
             else 
                 puts "Spot not found"
             end
-
-    when "Change or Delete Review"
-        choices = user.reload.reviews.map do |r|
-            spot = Bar.all.find { |b| b.id == r.bar_id }
-            "#{spot.business_name.nil? ? (spot.name) : (spot.business_name)}: #{r.rating}"
-        end
-        choices << "Back"
-        my_review = prompt.select("Choose a Review to Edit/Delete:",choices)
-        if my_review != "Back"
-            ind = choices.find_index(my_review)
-            review_to_change = user.reviews[ind]
-            crud = prompt.select("Would you like to Edit or Delete this Review?",["Edit","Delete","Back"])
-            
-            case crud
-            when 'Edit'
-                edit_review(review_to_change)
-                
-            when 'Delete'
-                delete_review(review_to_change)
-            end
-        end
     when "Explore Spots"
         att = prompt.select('',['By Name','By City','By Zip'])
         case att
