@@ -71,9 +71,14 @@ until exit
     when "Create Review"
         spot_name = prompt.ask("What Spot would you like to Review?")
         spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
-        rate = prompt.ask("Please rate #{spot_name} from 0-10")
-        new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
-        puts "Review created!"
+            if spot
+                puts "#{spot.name}"
+                rate = prompt.ask("Please rate #{spot_name} from 0-10")
+                new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
+                puts "Review created!"
+            else 
+                puts "Spot not found"
+            end
 
     when "Change or Delete Review"
         choices = user.reload.reviews.map do |r|
