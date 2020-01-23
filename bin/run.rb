@@ -1,4 +1,5 @@
 require_relative '../config/environment'
+require_relative './helpermethods'
 prompt = TTY::Prompt.new
 
 def pause()
