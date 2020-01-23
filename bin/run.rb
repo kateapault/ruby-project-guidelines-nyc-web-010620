@@ -42,6 +42,7 @@ until logged_in
         pw = prompt.mask("Enter password: ")
         user = User.create({name: username, password: pw})
         logged_in = true
+        puts "Welcome, #{user.name}! Thanks for signing up!"
     end
 end
 
