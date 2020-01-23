@@ -88,7 +88,7 @@ until exit
         spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
             if spot
                 puts "#{spot.name}"
-                rate = prompt.ask("Please rate #{spot_name} from 0-10")
+                rate = prompt.ask("Please rate #{spot_name} from 0-10").to_i.clamp(0,10)
                 new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
                 puts "Review created!"
             else 
@@ -100,28 +100,30 @@ until exit
             spot = Bar.all.find { |b| b.id == r.bar_id }
             "#{spot.business_name.nil? ? (spot.name) : (spot.business_name)}: #{r.rating}"
         end
-        my_review = prompt.enum_select("Choose a Review to Edit/Delete:",choices)
-        ind = choices.find_index(my_review)
-        review_to_change = user.reviews[ind]
-        crud = prompt.select("Would you like to Edit or Delete this Review?",["Edit","Delete"])
-        
-        case crud
-        when 'Edit'
-            new_rating = prompt.ask("What is your new Rating for this Spot?")
-            review_to_change.rating = new_rating
-            review_to_change.save
-            sleep(0.25)
-            puts "Review Updated!"
+        choices << "Back"
+        my_review = prompt.select("Choose a Review to Edit/Delete:",choices)
+        if my_review != "Back"
+            ind = choices.find_index(my_review)
+            review_to_change = user.reviews[ind]
+            crud = prompt.select("Would you like to Edit or Delete this Review?",["Edit","Delete"])
             
-        when 'Delete'
-            x = prompt.yes?("Are you sure you want to delete this Review?")
-            if x
-                review_to_change.reload.delete
+            case crud
+            when 'Edit'
+                new_rating = prompt.ask("What is your new Rating for this Spot?").to_i.clamp(0,10)
+                review_to_change.rating = new_rating
+                review_to_change.save
                 sleep(0.25)
-                puts "Review Deleted! (ノಠ益ಠ)ノ彡┻━┻"
+                puts "Review Updated!"
+                
+            when 'Delete'
+                x = prompt.yes?("Are you sure you want to delete this Review?")
+                if x
+                    review_to_change.reload.delete
+                    sleep(0.25)
+                    puts "Review Deleted! (ノಠ益ಠ)ノ彡┻━┻"
+                end
             end
         end
-
     when "Explore Spots"
         att = prompt.select('',['By Name','By City','By Zip'])
         case att
