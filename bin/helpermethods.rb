@@ -37,13 +37,6 @@ def selectable_reviews(arr)
 end
 
 
-
-
-def selectable_users(arr)
-
-end
-
-
 def selectable_spots(arr)
     prompt = TTY::Prompt.new
     # takes in array of businesses, makes them selectable options
@@ -68,8 +61,12 @@ end
 
 def search_spots_by(attribute)
     prompt = TTY::Prompt.new
-
-    search_term = prompt.ask("Enter #{attribute} to search: ").upcase!
+    search_term = nil
+    until search_term
+        system('clear')
+        search_term = prompt.ask("Enter #{attribute} to search: ")
+    end
+    search_term.upcase!
     spots = Bar.all.select do |spot|
         case attribute
         when "city"
