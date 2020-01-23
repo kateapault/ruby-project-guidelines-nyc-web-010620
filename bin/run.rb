@@ -66,7 +66,7 @@ until exit
 
     when "Create Review"
         spot_name = prompt.ask("What Spot would you like to Review?")
-        spot = Bar.all.find { |b| b.business_name == spot_name }
+        spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
         rate = prompt.ask("Please rate #{spot_name} from 0-9")
         new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
         puts "Review created!"
@@ -141,13 +141,17 @@ until exit
             puts "#{t.business_name}, #{t.address_city}, #{t.contact_number}"
             puts "---------------------------------"
             rates = t.reviews.map { |r| r.rating }
-            real_rating = rates.each {|s| s > 0}
-            puts "Average rating: #{real_rating.sum/real_rating.size}"
-            puts "---------------------------------"
-            puts "Reviews: "
-            t.reviews.each do |review|
-                u = User.all.find { |user| user.id == review.user_id }
-                puts "#{u.name} gave this spot a #{review.rating}"
+            if rates.size > 0
+                real_rating = rates.each {|s| s > 0}
+                puts "Average rating: #{real_rating.sum/real_rating.size}"
+                puts "---------------------------------"
+                puts "Reviews: "
+                t.reviews.each do |review|
+                    u = User.all.find { |user| user.id == review.user_id }
+                    puts "#{u.name} gave this spot a #{review.rating}"
+                end
+            else
+                puts "No reviews yet." # can we add something to link this to review for this spot?
             end
         end
         else
