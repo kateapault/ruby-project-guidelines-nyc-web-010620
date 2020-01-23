@@ -7,6 +7,7 @@ def pause()
 end
 
 logo = '
+
  .d8888b.  8888888b.   .d88888b. 88888888888 88888888888 8888888888 8888888b.  
 d88P  Y88b 888   Y88b d88P" "Y88b    888         888     888        888   Y88b 
 Y88b.      888    888 888     888    888         888     888        888    888 
@@ -19,7 +20,9 @@ Y88b  d88P 888        Y88b. .d88P    888         888     888        888  T88b
                                                                               
 '
 puts logo
+
 logged_in = false
+
 until logged_in
     start_action = prompt.select('',['Log in','Sign up'])
     if start_action == 'Log in'
@@ -60,13 +63,13 @@ until exit
         user.reload.reviews.each do |r|
             puts '-------------'
             spot = Bar.all.find { |b| b.id == r.bar_id }
-            puts "#{spot.business_name} | #{spot.contact_number}"
+            puts "#{spot.business_name.nil? ? (spot.name) : (spot.business_name)} | #{spot.contact_number}"
             puts "Rating: #{r.rating}"
         end
 
     when "Create Review"
         spot_name = prompt.ask("What Spot would you like to Review?")
-        spot = Bar.all.find { |b| b.business_name == spot_name }
+        spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
         rate = prompt.ask("Please rate #{spot_name} from 0-9")
         new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
         puts "Review created!"
