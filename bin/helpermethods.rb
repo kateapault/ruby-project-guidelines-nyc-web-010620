@@ -32,7 +32,7 @@ def search_spots_by(attribute)
         when "city"
             spot.address_city == search_term
         when "zip"
-            spot.address_zip == search_term
+            spot.address_zip == search_term.to_i
         when "name"
             if spot["business_name"]
                 spot["business_name"].include?(search_term)

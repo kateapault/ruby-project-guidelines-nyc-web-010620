@@ -25,8 +25,11 @@ puts logo
 logged_in = false
 
 until logged_in
+    
     start_action = prompt.select('',['Log In','Sign Up','About'])
+    
     case start_action
+    
     when "Log In"
         username = prompt.ask("Enter Username: ")
         user = User.all.find { |u| u.name == username }
@@ -41,6 +44,7 @@ until logged_in
         else
             puts "Username not found. Please sign up."
         end
+    
     when "Sign Up"
         unique_username = false
         until unique_username 
@@ -55,8 +59,10 @@ until logged_in
         user = User.create({name: username, password: pw})
         logged_in = true
         puts "Welcome, #{user.name}! Thanks for signing up!"
+    
     when "About"
         puts "Info goes here!"
+    
     end
 end
 
