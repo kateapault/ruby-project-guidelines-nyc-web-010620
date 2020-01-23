@@ -127,7 +127,23 @@ until exit
         end
         
     when "See Another Person's Reviews"
-        
+        users = User.all
+        chosen_user = prompt.select("Select user:") do |menu|
+            users.each do |u|
+                menu.choice "#{u.name}", u
+            end
+        end
+        chosen_reviews = chosen_user.reviews
+        puts "#{chosen_user.name} : #{chosen_reviews.size} reviews\n----------------"
+        if chosen_reviews.size > 0
+            chosen_reviews.each do |r|
+                this_spot = Bar.all.find { |b| b.id == r.bar_id }
+                this_spot.business_name.nil? ? (name = this_spot.name) : (name = this_spot.business_name)
+                puts "#{name} | #{this_spot.contact_number}\nRating: #{r.rating}\n#{r.comments}\n---"    
+            end
+        else
+            puts "No reviews yet!"
+        end
     when "Exit"
         exit = true
     end
