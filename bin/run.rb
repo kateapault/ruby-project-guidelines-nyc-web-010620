@@ -25,8 +25,9 @@ puts logo
 logged_in = false
 
 until logged_in
-    start_action = prompt.select('',['Log in','Sign up'])
-    if start_action == 'Log in'
+    start_action = prompt.select('',['Log In','Sign Up','About'])
+    case start_action
+    when "Log In"
         username = prompt.ask("Enter Username: ")
         user = User.all.find { |u| u.name == username }
         if user
@@ -40,13 +41,22 @@ until logged_in
         else
             puts "Username not found. Please sign up."
         end
-    else
-        # create user
-        username = prompt.ask("Enter a username: ")
-        pw = prompt.mask("Enter password: ")
+    when "Sign Up"
+        unique_username = false
+        until unique_username 
+            username = prompt.ask("Enter a username: ")
+            if User.all.find { |u| u.name == username }
+                puts "Sorry, that username is taken. Please try again."
+            else
+                unique_username = true
+            end
+        end
+        pw = prompt.mask("Create password: ")
         user = User.create({name: username, password: pw})
         logged_in = true
         puts "Welcome, #{user.name}! Thanks for signing up!"
+    when "About"
+        puts "Info goes here!"
     end
 end
 
@@ -61,11 +71,16 @@ until exit
 
     when "See My Reviews"
         puts "My Reviews:"
-        user.reload.reviews.each do |r|
-            puts '-------------'
-            spot = Bar.all.find { |b| b.id == r.bar_id }
-            puts "#{spot.business_name.nil? ? (spot.name) : (spot.business_name)} | #{spot.contact_number}"
-            puts "Rating: #{r.rating}"
+        my_reviews = user.reload.reviews
+        if my_reviews.size > 0
+            my_reviews.each do |r|
+                puts '-------------'
+                spot = Bar.all.find { |b| b.id == r.bar_id }
+                puts "#{spot.business_name.nil? ? (spot.name) : (spot.business_name)} | #{spot.contact_number}"
+                puts "Rating: #{r.rating}"
+            end
+        else
+            puts "No reviews yet!"
         end
 
     when "Create Review"

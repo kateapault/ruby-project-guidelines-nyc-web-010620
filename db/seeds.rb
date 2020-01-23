@@ -16,6 +16,9 @@ end
 call_results
 
 User.create({name: "u",password:"j"})
+User.create({name:"",password:""})
+User.create({name:"Fakename",password:"password"})
+
 
 # user1 = User.create({name:"Aly"})
 # user2 = User.create({name:"Bob"})
