@@ -83,10 +83,21 @@ until exit
         spot_name = prompt.ask("What Spot would you like to Review?").upcase!
         spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
             if spot
-                puts "#{spot.name}"
-                rate = prompt.ask("Please rate #{spot_name} from 0-10").to_i.clamp(0,10)
-                new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
-                puts "Review created!"
+                if reviewed_spot = spot.reviews.find { |d| d.user_id == user.id }
+                   y = prompt.yes?("Would you like to edit your Review?")
+                    if y 
+                        new_rating = prompt.ask("What is your new Rating for this Spot?")
+                        reviewed_spot.rating = new_rating
+                        reviewed_spot.save
+                        sleep(0.25)
+                        puts "Review Updated!"
+                    end
+                else
+                    puts "#{spot.name}"
+                    rate = prompt.ask("Please rate #{spot_name} from 0-10")
+                    new_review = Review.create({user_id: user.id,bar_id: spot.id,rating: rate})
+                    puts "Review created!"
+                end
             else 
                 puts "Spot not found"
             end
