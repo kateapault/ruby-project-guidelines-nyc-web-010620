@@ -122,13 +122,13 @@ until exit
         case att
         when 'By Zip'
             spot = search_spots_by("zip")
-            spot_profile(spot)
+            spot_profile(spot,user)
         when 'By City'
             spot = search_spots_by("city")
-            spot_profile(spot)
+            spot_profile(spot,user)
         when 'By Name'
             spot = search_spots_by("name")
-            spot_profile(spot)
+            spot_profile(spot,user)
         end
         
     when "See Another Person's Reviews"

@@ -47,11 +47,7 @@ def selectable_spots(arr)
             spot["business_name"] ? (name = spot["business_name"]) : (name = spot["name"])
             rates = spot.reviews.map { |r| r.rating }
             if rates.size > 0
-                rates_info = "Average rating: #{rates.sum/rates.size}\nReviews:\n"
-                spot.reviews.each do |review|
-                    u = User.all.find { |user| user.id == review.user_id }
-                    rates_info = rates_info + "\n#{u.name} gave this spot a #{review.rating}"
-                end
+                rates_info = "Average rating: #{rates.sum/rates.size}"
             else
                 rates_info = "No reviews yet"
             end    
@@ -61,7 +57,8 @@ def selectable_spots(arr)
     end
 end
 
-def spot_profile(arg)
+def spot_profile(arg,logged_in_user)
+    prompt = TTY::Prompt.new
     puts "#{arg.business_name.nil? ? (arg.name) : (arg.business_name)} | #{arg.address_city} | #{arg.contact_number}"
     puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
     arg.reviews.each do |review|
@@ -69,8 +66,27 @@ def spot_profile(arg)
         puts "#{user.name} gave this place a #{review.rating}\n #{review.comments}"
         puts "---------------------------------"
     end
-
-end
+        if review = arg.reviews.find { |d| d.user_id == logged_in_user.id }
+            y = prompt.yes?("Would you like to edit your Review?")
+             if y 
+                 new_rating = prompt.ask("What is your new Rating for this Spot?")
+                 review.rating = new_rating
+                 new_comment = prompt.ask("Update your Comment on this Spot")
+                 review.comments = new_comment
+                 review.save
+                 sleep(0.25)
+                 puts "Review Updated!"
+             end
+         else
+            x = prompt.yes?("Would you like leave a Review for #{arg.name}?")
+                if x 
+                    rate = prompt.ask("Please rate #{arg.name} from 0-10: ")
+                    comment = prompt.ask("Please enter your comments on this Spot: ")
+                    new_review = Review.create({user_id: logged_in_user.id,bar_id: arg.id,rating: rate,comments: comment})
+                    puts "Review created!"
+                end
+         end
+    end
 
 def search_spots_by(attribute)
     prompt = TTY::Prompt.new
