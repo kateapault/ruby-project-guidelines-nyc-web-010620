@@ -98,7 +98,14 @@ until exit
         end
 
     when "Create Review"
-        spot_name = prompt.ask("What Spot would you like to Review?").upcase!
+        n = true
+        while n
+        spot_name = prompt.ask("What Spot would you like to Review?")
+            if spot_name != nil 
+                n = false
+                spot_name = spot_name.upcase
+            end
+        end
         spot = Bar.all.find { |b| b.business_name == spot_name || b.name == spot_name }
             if spot
                 if reviewed_spot = spot.reviews.find { |d| d.user_id == user.id }
