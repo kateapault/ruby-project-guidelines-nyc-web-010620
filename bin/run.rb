@@ -23,9 +23,10 @@ Y88b  d88P 888        Y88b. .d88P    888         888     888        888  T88b
 '
 
 logged_in = false
+system('clear')
 puts logo
 until logged_in
-    start_action = prompt.select('',['Log In','Sign Up','About'])
+    start_action = prompt.select('',['Log In','Sign Up','About','Exit'])
     
     case start_action
     
@@ -61,6 +62,10 @@ until logged_in
     
     when "About"
         puts "This super cool program was made by Ed and Kate for their mod 1 project.\n They used the Soda API gem and their brillaint brains to make this."
+    
+    when "Exit"
+        abort("Thanks for stopping by!")
+        
     end
 end
 
@@ -121,14 +126,17 @@ until exit
         att = prompt.select('',['By Name','By City','By Zip','Back'])
         case att
         when 'By Zip'
-            spot = search_spots_by("zip")
+            if spot = search_spots_by("zip")
             spot_profile(spot,user)
+            end
         when 'By City'
-            spot = search_spots_by("city")
+            if spot = search_spots_by("city")
             spot_profile(spot,user)
+            end
         when 'By Name'
-            spot = search_spots_by("name")
+            if spot = search_spots_by("name")
             spot_profile(spot,user)
+            end
         end
         
     when "See Another Person's Reviews"
